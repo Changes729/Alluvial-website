@@ -5,20 +5,11 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form action="http://localhost:8080/upload" method="post" encType="multipart/form-data">
+        <p />File Name: <input type="text" name="FileName" placeholder="file name" />
+        <p /><input type="file" name="FileName" />
+        <p /><button type="submit">Submit</button>
+      </form>
     </div>
   );
 }
