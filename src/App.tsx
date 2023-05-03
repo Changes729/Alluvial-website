@@ -5,7 +5,7 @@ import './App.css';
 function App() {
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
-    const url = "http://localhost:8080/upload/"
+    const url = "http://www.nolens.me/upload/"
     console.log("submit")
     event.preventDefault()
 
