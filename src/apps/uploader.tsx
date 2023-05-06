@@ -3,7 +3,7 @@ import React from 'react';
 const uploader = () => {
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
-    const url = window.location.href
+    const url = "/blobs/"
     console.log(url)
     event.preventDefault()
 
