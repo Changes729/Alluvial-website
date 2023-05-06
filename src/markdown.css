@@ -1,0 +1,39 @@
+/** github markdown container style. */
+.container {
+  width: 980px;
+  margin-right: auto;
+  margin-left: auto
+}
+
+.container:before {
+  display: table;
+  content: ""
+}
+
+.container:after {
+  display: table;
+  clear: both;
+  content: ""
+}
+
+/** github markdown container border */
+#readme .markdown-body,
+#readme .plain {
+  border: 1px solid #ddd;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  padding: 30px;
+  word-wrap: break-word;
+}
+
+#readme .plain pre {
+  font-size: 15px;
+  white-space: pre-wrap
+}
+
+@font-face {
+  font-family: 'Sunflower', sans-serif;
+  src: url('https://fonts.googleapis.com/css?family=Sunflower:300,500');
+  font-weight: normal;
+  font-style: normal;
+}

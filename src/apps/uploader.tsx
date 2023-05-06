@@ -3,8 +3,8 @@ import React from 'react';
 const uploader = () => {
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
-    const url = "/upload/"
-    console.log("submit")
+    const url = window.location.href
+    console.log(url)
     event.preventDefault()
 
     // collect files
