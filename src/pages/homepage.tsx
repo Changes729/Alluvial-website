@@ -38,11 +38,6 @@ const homepage = () => {
           font: "italic 100% \"Fira Sans\", serif",
           padding: "1vw",
         }} href="/doc/">doc</a>
-        <a style={{
-          color: "#f9ffa1",
-          font: "italic 100% \"Fira Sans\", serif",
-          padding: "1vw",
-        }} href="/uploader/">uploader</a>
       </div>
       <div className="homepage" style={{
         display: "flex",

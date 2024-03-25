@@ -22,7 +22,7 @@ class Doc extends Component<{}, DocProps> {
   }
 
   loadView(arg: string) {
-    var fetch_path = "/markdowns" + arg.substr("/doc".length);
+    var fetch_path = "/markdowns" + arg.substring("/doc".length);
     console.log(fetch_path)
 
     fetch(fetch_path, {
