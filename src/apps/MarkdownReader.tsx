@@ -4,9 +4,11 @@ import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import remarkMath from "remark-math"
+import { slide as Menu } from "react-burger-menu";
 import "github-markdown-css"
-import "../katex.css"
-import "../markdown.css"
+import "../css/katex"
+import "../css/markdown"
+import "../css/burger_menu"
 
 
 interface DocProps {
@@ -43,7 +45,7 @@ class Doc extends Component<{}, DocProps> {
 
   render() {
     const url_path = window.location.pathname;
-    return url_path.endsWith(".html") ? (
+    const MARKDOWN = url_path.endsWith(".html") ? (
       <div
         dangerouslySetInnerHTML={{
           __html: this.state.doc,
@@ -59,7 +61,10 @@ class Doc extends Component<{}, DocProps> {
           rehypePlugins={[rehypeKatex, rehypeRaw]}
         />
       </div>
-    );
+    )
+
+    return <div><Menu>
+    </Menu> {MARKDOWN} </div>;
   }
 }
 

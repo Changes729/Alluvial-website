@@ -1,0 +1,78 @@
+/**
+ * Source file copy from https://github.com/negomi/react-burger-menu?tab=readme-ov-file#javascript
+ */
+/** origin ---------------------------------------------------------*/
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #373a47;
+}
+
+/* Position and sizing of clickable cross button */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #bdc3c7;
+}
+
+/* General sidebar styles */
+.bm-menu {
+  background: #373a47;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  color: #b8b7ad;
+  padding: 0.8em;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/** custom ---------------------------------------------------------*/
+.bm-burger-button {
+  position: fixed;
+  width: 1.5em;
+  height: 1em;
+  left: 1em;
+  top: 1em;
+}
+
+.bm-menu {
+  background: rgb(255, 255, 255);
+}
+
+.bm-menu a{
+  padding-bottom: 0.5em;
+  font-size: 1em;
+  color: rgb(34, 43, 44);
+}
+
+.bm-item-list {
+  padding: 0em;
+}
+
+.bm-cross-button {
+  display: none;
+}
