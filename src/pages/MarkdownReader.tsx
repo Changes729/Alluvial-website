@@ -53,13 +53,14 @@ class Doc extends Component<{}, DocProps> {
     const url_path = window.location.pathname;
     var AlluvialDocument = (
       <div id="readme" className="container">
-        <ReactMarkdown
-          children={this.state.doc}
-          className="markdown-body"
-          skipHtml={false}
-          remarkPlugins={[remarkMath, remarkGfm]}
-          rehypePlugins={[rehypeKatex, rehypeRaw]}
-        />
+        <div className="markdown-body">
+          <ReactMarkdown
+            children={this.state.doc}
+            skipHtml={false}
+            remarkPlugins={[remarkMath, remarkGfm]}
+            rehypePlugins={[rehypeKatex, rehypeRaw]}
+          />
+        </div>
       </div>
     );
 

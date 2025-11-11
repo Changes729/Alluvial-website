@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
+    "@handlewithcare/remark-prosemirror": "^0.1.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -14,19 +15,28 @@
     "esbuild": "^0.20.1",
     "esbuild-sass-plugin": "^3.3.1",
     "github-markdown-css": "^5.2.0",
-    "react": "^18.2.0",
+    "prosemirror-commands": "^1.7.1",
+    "prosemirror-history": "^1.4.1",
+    "prosemirror-keymap": "^1.2.3",
+    "prosemirror-model": "^1.25.3",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-transform": "^1.10.4",
+    "prosemirror-unified": "^0.8.3",
+    "prosemirror-view": "^1.41.3",
+    "react": "^19.2.0",
     "react-burger-menu": "^2.9.2",
-    "react-dom": "^18.2.0",
-    "react-markdown": "^8.0.7",
-    "react-router": "^7.6.3",
-    "react-router-dom": "^6.11.1",
-    "react-scripts": "5.0.1",
+    "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "react-router": "^7.9.5",
     "rehype-katex": "^6.0.3",
-    "rehype-raw": "^6.1.1",
-    "remark-gfm": "^3.0.1",
-    "remark-math": "^5.1.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "remark-stringify": "^11.0.0",
     "typescript": "^5.0.4",
-    "web-vitals": "^2.1.0"
+    "unified": "^11.0.5"
   },
   "scripts": {
     "build": "node script/esbuild.mjs"
@@ -48,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

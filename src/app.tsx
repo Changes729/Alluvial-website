@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 
 import NotFoundPage from "./pages/not-found";
+import PMEditorView from "./pages/ProseMirrorEditor"
 import Homepage from "./pages/homepage";
 import ImageContainer from "./pages/ImageReader";
 import Doc from "./pages/MarkdownReader";
@@ -19,6 +20,7 @@ function App() {
         <Route index path="/" element={<Homepage />} />
         <Route path="/images/*" element={<ImageContainer />} />
         <Route path="/doc/*" element={<Doc />} />
+        <Route path="/editor/*" element={<PMEditorView />} />
       </Routes>
     </BrowserRouter>
   );

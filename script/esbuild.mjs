@@ -54,7 +54,7 @@ http
     let proxyReq = http.request(options, (proxyRes) => {
       if (proxyRes.statusCode != 200) {
         console.log(
-          `request failed with url ${options.url} code: ${proxyRes.statusCode}`
+          `request failed with url ${options.path} code: ${proxyRes.statusCode}`
         );
 
         options.path = "";
@@ -64,7 +64,7 @@ http
             anotherRes.pipe(res, { end: true });
           } else {
             console.log(
-              `request failed with url ${options.url} code: ${proxyRes.statusCode}`
+              `request failed with url ${options.path} code: ${proxyRes.statusCode}`
             );
             res.end();
           }
