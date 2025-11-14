@@ -23,15 +23,19 @@ import {
   remarkProseMirror,
   toPmNode,
   toPmMark,
+  fromProseMirror,
+  fromPmNode,
+  fromPmMark,
   type RemarkProseMirrorOptions,
 } from "@handlewithcare/remark-prosemirror";
 import { type Node as PmNode } from "prosemirror-model";
 import { undo, redo, history } from "prosemirror-history";
 import { baseKeymap } from "prosemirror-commands";
 import { keymap } from "prosemirror-keymap";
-import "../css/editor.scss"
+import "../css/editor.scss";
 
 import { mySchema } from "./mySchema";
+import { Transform } from "prosemirror-transform";
 
 interface DocProps {
   doc: string;
@@ -67,7 +71,14 @@ class PMEditorView extends Component<{}, DocProps> {
               schema: mySchema,
               plugins: [
                 history(),
-                keymap({ "Mod-z": undo, "Mod-y": redo }),
+                keymap({
+                  "Mod-z": undo,
+                  "Mod-y": redo,
+                  "Ctrl-s": (s) => {
+                    console.log(proseMirrorToMarkdown(s.doc));
+                    return true;
+                  },
+                }),
                 keymap(baseKeymap),
               ],
             }),
@@ -139,11 +150,16 @@ function markdownToProseMirror(markdown: string): PmNode {
           var children = [];
           if (null != node.checked) {
             children.push(
-              mySchema.nodes.check_box.create({ checked: node.checked ? true: null })
+              mySchema.nodes.check_box.create({
+                checked: node.checked ? true : null,
+              })
             );
           }
           children.push(...state.all(node));
-          return mySchema.nodes.list_item.createAndFill({task: node.checked != null}, children);
+          return mySchema.nodes.list_item.createAndFill(
+            { task: node.checked != null },
+            children
+          );
         },
         // If you need to take over control, you can write your
         // own handler, which gets passed the mdast node, its
@@ -158,7 +174,6 @@ function markdownToProseMirror(markdown: string): PmNode {
           return nodeType.createAndFill({}, children);
         },
         heading(node, _, state) {
-          console.log(node);
           const children = state.all(node);
           return mySchema.nodes.heading.create({ level: node.depth }, children);
         },
@@ -199,6 +214,58 @@ function markdownToProseMirror(markdown: string): PmNode {
     .processSync(markdown);
 
   return doc.result;
+}
+
+function proseMirrorToMarkdown(doc: PmNode) {
+  // Convert to mdast with the fromProseMirror util.
+  // It takes a schema, a set of node handlers, and a
+  // set of mark handlers, each of which converts a
+  // ProseMirror node or mark to an mdast node.
+  const mdast = fromProseMirror(doc, {
+    schema: mySchema,
+    nodeHandlers: {
+      // Simple nodes can be converted with the fromPmNode
+      // util.
+      paragraph: fromPmNode("paragraph"),
+      list_item: fromPmNode("listItem", (node) => (console.log(node), node.attrs.task ? {
+        checked: node.content.content[0].attrs.checked == true
+      } : {})),
+      // You can set mdast node properties from the
+      // ProseMirror node or its attrs
+      heading: fromPmNode("heading", (node) => ({
+        depth: node.attrs.level,
+      })),
+      ordered_list: fromPmNode("list", () => ({
+        ordered: true,
+      })),
+      bullet_list: fromPmNode("list", () => ({
+        ordered: false,
+      })),
+      code_block: fromPmNode("code", (node) => ({
+        value: new Transform(node).doc.textContent.toString(),
+        lang: node.attrs.params,
+      })),
+    },
+    markHandlers: {
+      // Simple marks can be converted with the fromPmMark
+      // util.
+      em: fromPmMark("emphasis"),
+      strong: fromPmMark("strong"),
+      // Again, mdast node properties can be set from the
+      // ProseMirror mark attrs
+      link: fromPmMark("link", (mark) => ({
+        url: mark.attrs["href"],
+        title: mark.attrs["title"],
+      })),
+    },
+  });
+
+  console.log(mdast)
+
+  return unified()
+    .use(remarkGfm)
+    .use(remarkStringify)
+    .stringify(mdast);
 }
 
 export default PMEditorView;
