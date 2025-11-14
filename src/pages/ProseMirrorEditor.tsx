@@ -139,7 +139,7 @@ function markdownToProseMirror(markdown: string): PmNode {
           var children = [];
           if (null != node.checked) {
             children.push(
-              mySchema.nodes.check_box.create({ checked: node.checked })
+              mySchema.nodes.check_box.create({ checked: node.checked ? true: null })
             );
           }
           children.push(...state.all(node));
