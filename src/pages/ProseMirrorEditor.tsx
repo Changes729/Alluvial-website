@@ -16,8 +16,8 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkStringify from "remark-stringify";
 
-import { EditorView } from "prosemirror-view";
-import { EditorState } from "prosemirror-state";
+import { EditorView, NodeView } from "prosemirror-view";
+import { EditorState, Plugin } from "prosemirror-state";
 import { unified } from "unified";
 import {
   remarkProseMirror,
@@ -82,6 +82,11 @@ class PMEditorView extends Component<{}, DocProps> {
                 keymap(baseKeymap),
               ],
             }),
+            nodeViews: {
+              check_box(node, view, getPos) {
+                return new CheckBoxItem(node, view, getPos);
+              },
+            },
           });
 
           this._view.focus();
@@ -227,9 +232,17 @@ function proseMirrorToMarkdown(doc: PmNode) {
       // Simple nodes can be converted with the fromPmNode
       // util.
       paragraph: fromPmNode("paragraph"),
-      list_item: fromPmNode("listItem", (node) => (console.log(node), node.attrs.task ? {
-        checked: node.content.content[0].attrs.checked == true
-      } : {})),
+      list_item: fromPmNode(
+        "listItem",
+        (node) => (
+          console.log(node),
+          node.attrs.task
+            ? {
+                checked: node.content.content[0].attrs.checked == true,
+              }
+            : {}
+        )
+      ),
       // You can set mdast node properties from the
       // ProseMirror node or its attrs
       heading: fromPmNode("heading", (node) => ({
@@ -260,12 +273,42 @@ function proseMirrorToMarkdown(doc: PmNode) {
     },
   });
 
-  console.log(mdast)
+  console.log(mdast);
 
-  return unified()
-    .use(remarkGfm)
-    .use(remarkStringify)
-    .stringify(mdast);
+  return unified().use(remarkGfm).use(remarkStringify).stringify(mdast);
+}
+
+class CheckBoxItem implements NodeView {
+  dom: HTMLInputElement;
+  contentDOM: HTMLInputElement;
+  view: EditorView;
+
+  constructor(node: PmNode, view: EditorView, getPos: () => number | undefined) {
+    var dom = document.createElement("input") as HTMLInputElement;
+    dom.className = "task-list-item-checkbox";
+    dom.type = "checkbox";
+    dom.contentEditable = "true"
+    dom.checked = node.attrs.checked;
+    dom.addEventListener("click", (e) => {
+      console.log(getPos())
+      var pos = this.view.posAtDOM(this.dom, 0);
+      console.log(pos);
+      let newState = this.view.state.apply(this.view.state.tr);
+      var founded = false;
+      var found;
+      newState.doc.descendants((node, n_pos) => {
+        if (!founded && n_pos >= pos) {
+          founded = true;
+          found = { node, pos };
+          found.node.attrs.checked = !found.node.attrs.checked;
+        }
+      });
+      this.view.updateState(newState);
+    });
+
+    this.dom = this.contentDOM = dom;
+    this.view = view;
+  }
 }
 
 export default PMEditorView;
