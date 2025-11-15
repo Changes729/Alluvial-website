@@ -78,10 +78,8 @@ export const mySchema = new Schema({
 
     list_item: {
       content: "block+",
-      defining: true,
-      attrs: {task: {default: false}},
-      parseDOM: [{tag: "li", getAttrs: dom => ({ task: (dom as HTMLElement).className == "task-list-item" ? true : false})}],
-      toDOM(node) { return ["li", node.attrs.task ? {class: "task-list-item" } : {}, 0] }
+      attrs: {checked: {default: false}},
+      parseDOM: [{tag: "li", getAttrs: dom => ({ checked: (dom as HTMLElement).className == "task-list-item" ? true : false})}],
     },
 
     check_box: {

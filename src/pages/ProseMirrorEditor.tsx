@@ -28,9 +28,9 @@ import {
   fromPmMark,
   type RemarkProseMirrorOptions,
 } from "@handlewithcare/remark-prosemirror";
-import { type Node as PmNode } from "prosemirror-model";
+import { type Node as PmNode, NodeType, Attrs } from "prosemirror-model";
 import { undo, redo, history } from "prosemirror-history";
-import { baseKeymap } from "prosemirror-commands";
+import { baseKeymap } from "./commands";
 import { keymap } from "prosemirror-keymap";
 import "../css/editor.scss";
 
@@ -83,8 +83,8 @@ class PMEditorView extends Component<{}, DocProps> {
               ],
             }),
             nodeViews: {
-              check_box(node, view, getPos) {
-                return new CheckBoxItem(node, view, getPos);
+              list_item(node, view, getPos) {
+                return new ListItem(node, view, getPos);
               },
             },
           });
@@ -152,17 +152,9 @@ function markdownToProseMirror(markdown: string): PmNode {
         // util
         paragraph: toPmNode(mySchema.nodes.paragraph),
         listItem(node, _, state) {
-          var children = [];
-          if (null != node.checked) {
-            children.push(
-              mySchema.nodes.check_box.create({
-                checked: node.checked ? true : null,
-              })
-            );
-          }
-          children.push(...state.all(node));
+          var children = state.all(node);
           return mySchema.nodes.list_item.createAndFill(
-            { task: node.checked != null },
+            { checked: node.checked },
             children
           );
         },
@@ -232,17 +224,9 @@ function proseMirrorToMarkdown(doc: PmNode) {
       // Simple nodes can be converted with the fromPmNode
       // util.
       paragraph: fromPmNode("paragraph"),
-      list_item: fromPmNode(
-        "listItem",
-        (node) => (
-          console.log(node),
-          node.attrs.task
-            ? {
-                checked: node.content.content[0].attrs.checked == true,
-              }
-            : {}
-        )
-      ),
+      list_item: fromPmNode("listItem", (node) => ({
+        checked: node.attrs.checked,
+      })),
       // You can set mdast node properties from the
       // ProseMirror node or its attrs
       heading: fromPmNode("heading", (node) => ({
@@ -278,35 +262,51 @@ function proseMirrorToMarkdown(doc: PmNode) {
   return unified().use(remarkGfm).use(remarkStringify).stringify(mdast);
 }
 
-class CheckBoxItem implements NodeView {
-  dom: HTMLInputElement;
-  contentDOM: HTMLInputElement;
+class ListItem implements NodeView {
+  dom: HTMLElement;
+  contentDOM: HTMLElement;
   view: EditorView;
 
-  constructor(node: PmNode, view: EditorView, getPos: () => number | undefined) {
-    var dom = document.createElement("input") as HTMLInputElement;
-    dom.className = "task-list-item-checkbox";
-    dom.type = "checkbox";
-    dom.contentEditable = "true"
-    dom.checked = node.attrs.checked;
-    dom.addEventListener("click", (e) => {
-      console.log(getPos())
-      var pos = this.view.posAtDOM(this.dom, 0);
-      console.log(pos);
-      let newState = this.view.state.apply(this.view.state.tr);
-      var founded = false;
-      var found;
-      newState.doc.descendants((node, n_pos) => {
-        if (!founded && n_pos >= pos) {
-          founded = true;
-          found = { node, pos };
-          found.node.attrs.checked = !found.node.attrs.checked;
-        }
-      });
-      this.view.updateState(newState);
-    });
+  constructor(
+    node: PmNode,
+    view: EditorView,
+    getPos: () => number | undefined
+  ) {
+    var dom = document.createElement("li") as HTMLLIElement;
 
-    this.dom = this.contentDOM = dom;
+    if (node.attrs.checked != null) {
+      var checkbox = document.createElement("input") as HTMLInputElement;
+      checkbox.className = "task-list-item-checkbox";
+      checkbox.type = "checkbox";
+      checkbox.contentEditable = "true";
+      checkbox.checked = node.attrs.checked;
+
+      checkbox.addEventListener("click", () => {
+        console.log("check box onchange");
+        var pos = this.view.posAtDOM(this.dom, 0);
+        let newState = this.view.state.apply(this.view.state.tr);
+
+        var found;
+        console.log(pos);
+        newState.doc.descendants((node, n_pos) => {
+          console.log(node, n_pos);
+          if (n_pos < pos) {
+            found = { node, pos };
+          } else {
+            found.node.attrs.checked = !found.node.attrs.checked;
+            return false;
+          }
+        });
+        this.view.updateState(newState);
+      });
+
+      dom.className = "task-list-item";
+      dom.appendChild(checkbox);
+    }
+
+    this.contentDOM = document.createElement("span");
+    dom.appendChild(this.contentDOM);
+    this.dom = dom;
     this.view = view;
   }
 }
