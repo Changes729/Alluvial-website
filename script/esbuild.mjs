@@ -27,7 +27,7 @@ let ctx = await esbuild.context({
   bundle: true,
   minify: true,
   sourcemap: true,
-  loader: { ".htm": "file", ".svg": "text", ".css": "css", ".woff2": "file" },
+  loader: { ".htm": "file", ".svg": "text", ".css": "css", ".woff2": "file", ".ttf": "file", ".woff": "file" },
   outdir: `${OUT_DIR}`,
   define: {
     "process.env.NODE_ENV": '"production"',

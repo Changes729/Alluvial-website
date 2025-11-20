@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 
 import NotFoundPage from "./pages/not-found";
 import PMEditorView from "./pages/ProseMirrorEditor"
+import MilkDownEditor from "./pages/milkdown"
 import Homepage from "./pages/homepage";
 import ImageContainer from "./pages/ImageReader";
 import Doc from "./pages/MarkdownReader";
@@ -20,7 +21,8 @@ function App() {
         <Route index path="/" element={<Homepage />} />
         <Route path="/images/*" element={<ImageContainer />} />
         <Route path="/doc/*" element={<Doc />} />
-        <Route path="/editor/*" element={<PMEditorView />} />
+        <Route path="/prosemirror-editor/*" element={<PMEditorView />} />
+        <Route path="/milkdown/*" element={<MilkDownEditor />} />
       </Routes>
     </BrowserRouter>
   );

@@ -28,14 +28,14 @@ import {
   fromPmMark,
   type RemarkProseMirrorOptions,
 } from "@handlewithcare/remark-prosemirror";
-import { type Node as PmNode, NodeType, Attrs } from "prosemirror-model";
+import { type Node as PmNode, NodeType, Attrs, NodeRange } from "prosemirror-model";
 import { undo, redo, history } from "prosemirror-history";
 import { baseKeymap } from "./commands";
 import { keymap } from "prosemirror-keymap";
 import "../css/editor.scss";
 
 import { mySchema } from "./mySchema";
-import { Transform } from "prosemirror-transform";
+import { Transform, liftTarget } from "prosemirror-transform";
 
 interface DocProps {
   doc: string;
@@ -53,7 +53,7 @@ class PMEditorView extends Component<{}, DocProps> {
   }
 
   loadView(arg: string) {
-    var fetch_path = "/markdowns" + arg.substring("/editor".length);
+    var fetch_path = "/markdowns" + arg.substring("/prosemirror-editor".length);
     console.log(fetch_path);
 
     fetch(fetch_path, {
@@ -80,6 +80,24 @@ class PMEditorView extends Component<{}, DocProps> {
                   },
                 }),
                 keymap(baseKeymap),
+                new Plugin({
+                  props: {
+                    handleClick(view, pos) {
+                      var tr = view.state.tr;
+                      console.log(view.state.doc);
+                      var resolvePos = view.state.doc.resolve(pos);
+                      console.log(resolvePos);
+                      // tr.insertText("hello")
+                      var nodeRange = new NodeRange(resolvePos, resolvePos, resolvePos.depth - 1)
+                      // console.log(liftTarget(nodeRange))
+                      tr.lift(nodeRange, 0)
+                      // tr.split(pos, types.length, types);
+                      view.updateState(view.state.apply(tr));
+                      console.log(view.state.doc);
+                      return false; // We did not handle this
+                    },
+                  },
+                }),
               ],
             }),
             nodeViews: {
