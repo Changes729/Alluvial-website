@@ -1,59 +1,55 @@
-import React from "react";
+import React, { Component } from "react";
 
-const homepage = () => {
-  return (
-    <div style={{
-      height: "100vh",
-      width: "100vw",
-      background: "#001638",
-    }}>
-      <div style={{
-        display: "flex",
-        height: "3%",
-        width: "100vw",
-        alignItems: "center",
-      }}>
-        <a style={{
-          color: "#f9ffa1",
-          font: "italic 100% \"Fira Sans\", serif",
-          padding: "1vw",
-        }} href="/">Alluvial</a>
-        <a style={{
-          color: "#f9ffa1",
-          font: "italic 100% \"Fira Sans\", serif",
-          padding: "1vw",
-        }} href="/blobs/">blobs</a>
-        <a style={{
-          color: "#f9ffa1",
-          font: "italic 100% \"Fira Sans\", serif",
-          padding: "1vw",
-        }} href="/markdowns/">markdown</a>
-        <a style={{
-          color: "#f9ffa1",
-          font: "italic 100% \"Fira Sans\", serif",
-          padding: "1vw",
-        }} href="/images/">images</a>
-        <a style={{
-          color: "#f9ffa1",
-          font: "italic 100% \"Fira Sans\", serif",
-          padding: "1vw",
-        }} href="/doc/">doc</a>
+import MilkDownEditor from "./widget/Editor/milkdown";
+
+import style from "./homepage.module.scss";
+import { DivPic } from "./widget/DivPic";
+
+class Homepage extends Component<{}, {}> {
+  private _editor = React.createRef<MilkDownEditor>();
+  private _htmlViewer = React.createRef<HTMLDivElement>();
+
+  constructor(props: {}) {
+    super(props);
+  }
+
+  loadView(arg: string) {
+    var fetch_path = "/markdowns" + arg;
+    console.log(fetch_path);
+
+    fetch(fetch_path, {
+      method: "GET",
+    }).then((res) => {
+      res.text().then((markdown) => {
+        this._editor.current?.UpdateEditorContent(markdown);
+        this._htmlViewer.current?.setHTMLUnsafe(markdown);
+      });
+    });
+  }
+
+  componentDidMount() {
+    this.loadView(window.location.pathname);
+  }
+
+  render() {
+    const url_path = window.location.pathname;
+    var contentViewer = (
+      <div className={style["html-list"]} ref={this._htmlViewer}></div>
+    );
+    if (url_path.endsWith(".md")) {
+      contentViewer = (
+        <MilkDownEditor ref={this._editor} editable={false}></MilkDownEditor>
+      );
+    }
+    return (
+      <div className={style["view-homepage"]}>
+        <div>
+          <DivPic></DivPic>
+        </div>
+        {contentViewer}
       </div>
-      <div className="homepage" style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "97%",
-        width: "100vw",
-        background: "#FFFFFF",
-      }}>
-        <p style={{
-          color: "#002e6b",
-          font: "italic 16vh \"Fira Sans\", serif",
-        }}>Alluvial</p>
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
-export default homepage
+export default Homepage;

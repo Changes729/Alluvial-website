@@ -1,7 +1,8 @@
 import * as esbuild from "esbuild";
 import fs from "node:fs";
 import http from "node:http";
-import { sassPlugin } from "esbuild-sass-plugin";
+import { sassPlugin, postcssModules } from "esbuild-sass-plugin";
+import autoprefixer from "autoprefixer";
 
 let PORT = 3000;
 const APP_DIR = "src/";
@@ -27,13 +28,30 @@ let ctx = await esbuild.context({
   bundle: true,
   minify: true,
   sourcemap: true,
-  loader: { ".htm": "file", ".svg": "text", ".css": "css", ".woff2": "file", ".ttf": "file", ".woff": "file" },
+  loader: {
+    ".htm": "file",
+    ".svg": "text",
+    ".css": "css",
+    ".woff2": "file",
+    ".ttf": "file",
+    ".woff": "file",
+  },
   outdir: `${OUT_DIR}`,
   define: {
     "process.env.NODE_ENV": '"production"',
     "process.env.IS_PREACT": '"true"',
   },
-  plugins: [sassPlugin()],
+  plugins: [
+    sassPlugin({
+      filter: /\.module\.scss$/,
+      transform: postcssModules({
+        plugins: [autoprefixer],
+      }),
+    }),
+    sassPlugin({
+      filter: /\.scss$/,
+    }),
+  ],
   conditions: ["production"],
 });
 

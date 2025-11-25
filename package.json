@@ -6,6 +6,7 @@
     "@excalidraw/excalidraw": "^0.18.0",
     "@handlewithcare/remark-prosemirror": "^0.1.5",
     "@milkdown/components": "^7.17.1",
+    "@milkdown/core": "^7.17.1",
     "@milkdown/crepe": "^7.17.1",
     "@milkdown/ctx": "^7.17.1",
     "@milkdown/kit": "^7.17.1",
@@ -21,9 +22,12 @@
     "@types/node": "^18.16.0",
     "@types/react": "^18.0.38",
     "@types/react-dom": "^18.0.11",
+    "autoprefixer": "^10.4.22",
     "esbuild": "^0.20.1",
     "esbuild-sass-plugin": "^3.3.1",
     "github-markdown-css": "^5.2.0",
+    "postcss": "^8.5.6",
+    "postcss-modules": "^6.0.1",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-history": "^1.4.1",
     "prosemirror-keymap": "^1.2.3",
@@ -44,7 +48,6 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "remark-stringify": "^11.0.0",
-    "typescript": "^5.0.4",
     "unified": "^11.0.5"
   },
   "scripts": {
@@ -69,6 +72,7 @@
     ]
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-plugin-css-modules": "^5.2.0"
   }
 }

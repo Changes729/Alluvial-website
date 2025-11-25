@@ -1,32 +1,44 @@
-import type { Node } from "@milkdown/prose/model";
+import type { Node as PmNode } from "@milkdown/prose/model";
 import type { NodeViewConstructor } from "@milkdown/prose/view";
 
 import { listItemSchema } from "@milkdown/preset-commonmark";
-import { TextSelection } from "@milkdown/prose/state";
 import { $view } from "@milkdown/utils";
-import ReactDOM from "react-dom/client";
 
 import { withMeta } from "./meta";
-import { ListItem } from "./component";
-import { useEffect, useRef } from "react";
 
 export const listItemBlockView = $view(
   listItemSchema.node,
   (ctx): NodeViewConstructor => {
     return (initialNode, view, getPos) => {
-      const dom = document.createElement("div");
-      dom.className = "milkdown-list-item-block";
+      const updateAttrs = (node: PmNode) => {
+        const isTaskList = node.attrs.checked !== null;
+        if (isTaskList && checkbox == null) {
+          dom.removeChild(contentDOM);
+
+          checkbox = document.createElement("input");
+          checkbox.setAttribute("type", "checkbox");
+          checkbox.defaultChecked = initialNode.attrs.checked ? true : false;
+          checkbox.onclick = (e) => {
+            e.stopPropagation();
+            setAttr("checked", checkbox!.checked);
+          };
+
+          dom.appendChild(checkbox);
+          dom.appendChild(contentDOM);
+        }
+      };
+
+      const dom = document.createElement("li");
+      dom.className = "list-item";
+      let checkbox: HTMLInputElement | null = null;
 
       const contentDOM = document.createElement("div");
       contentDOM.setAttribute("data-content-dom", "true");
       contentDOM.classList.add("content-dom");
+      dom.appendChild(contentDOM);
+      updateAttrs(initialNode);
 
-      console.log("initialNode attrs:", initialNode.attrs);
-      var label = initialNode.attrs.label;
-      var checked = initialNode.attrs.checked;
-      var listType = initialNode.attrs.listType;
-      var readonly = !view.editable;
-      var selected = false;
+      let selected = false;
       const setAttr = (attr: string, value: unknown) => {
         if (!view.editable) return;
         const pos = getPos();
@@ -37,49 +49,15 @@ export const listItemBlockView = $view(
         console.log("Dispatching setNodeAttribute:", attr, value);
         view.dispatch(view.state.tr.setNodeAttribute(pos, attr, value));
       };
-      const disposeSelectedWatcher = (() => {
-        const isSelected = selected;
-        if (isSelected) {
+
+      const disposeSelectedWatcher = () => {
+        if (selected) {
           dom.classList.add("selected");
         } else {
           dom.classList.remove("selected");
         }
-      });
-      let raf = 0;
-      const onMount = (div: HTMLElement) => {
-        const { anchor, head } = view.state.selection;
-        div.appendChild(contentDOM);
-        // put the cursor to the new created list item
-        const anchorPos = view.state.doc.resolve(anchor);
-        const headPos = view.state.doc.resolve(head);
-        raf = requestAnimationFrame(() => {
-          cancelAnimationFrame(raf);
-          if (!anchorPos.doc.eq(view.state.doc)) return;
-          const selection = new TextSelection(anchorPos, headPos);
-          view.dispatch(view.state.tr.setSelection(selection));
-        });
       };
 
-      const root = ReactDOM.createRoot(dom)
-      root.render(
-        <ListItem
-          label={label}
-          checked={checked}
-          listType={listType}
-          readonly={readonly}
-          selected={selected}
-          setAttr={setAttr}
-          onMount={onMount}
-        />
-      );
-      const bindAttrs = (node: Node) => {
-        listType = node.attrs.listType;
-        label = node.attrs.label;
-        checked = node.attrs.checked;
-        readonly = !view.editable;
-      };
-
-      bindAttrs(initialNode);
       let node = initialNode;
       return {
         dom,
@@ -90,11 +68,12 @@ export const listItemBlockView = $view(
           if (
             updatedNode.sameMarkup(node) &&
             updatedNode.content.eq(node.content)
-          )
+          ) {
             return true;
+          }
 
           node = updatedNode;
-          bindAttrs(updatedNode);
+          updateAttrs(updatedNode);
           return true;
         },
         ignoreMutation: (mutation) => {
@@ -117,7 +96,7 @@ export const listItemBlockView = $view(
         },
         destroy: () => {
           disposeSelectedWatcher;
-          root.unmount();
+          // root.unmount();
           dom.remove();
           contentDOM.remove();
         },
