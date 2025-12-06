@@ -18,10 +18,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^29.5.1",
-    "@types/node": "^18.16.0",
-    "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11",
+    "alluvial-editor": "link:../Alluvial-Editor",
     "autoprefixer": "^10.4.22",
     "esbuild": "^0.20.1",
     "esbuild-sass-plugin": "^3.3.1",
@@ -30,15 +27,16 @@
     "postcss-modules": "^6.0.1",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-history": "^1.4.1",
+    "prosemirror-inputrules": "^1.5.1",
     "prosemirror-keymap": "^1.2.3",
     "prosemirror-model": "^1.25.3",
     "prosemirror-state": "^1.4.4",
     "prosemirror-transform": "^1.10.4",
     "prosemirror-unified": "^0.8.3",
     "prosemirror-view": "^1.41.3",
-    "react": "^19.2.0",
+    "react": "^19.2.1",
     "react-burger-menu": "^2.9.2",
-    "react-dom": "^19.2.0",
+    "react-dom": "^19.2.1",
     "react-markdown": "^10.1.0",
     "react-router": "^7.9.5",
     "rehype-katex": "^6.0.3",
@@ -72,7 +70,16 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "typescript": "^5.9.3",
     "typescript-plugin-css-modules": "^5.2.0"
+  },
+  "resolutions": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
   }
 }
