@@ -1,5 +1,5 @@
 $markdown-editor-min-width: 980px;
-$alluvial-icon-standard-width: 96px;
+$alluvial-icon-standard-width: 218px;
 $alluvial-icon-padding: 10px;
 $lr-min-width: calc(
   $markdown-editor-min-width + $alluvial-icon-standard-width +
@@ -9,6 +9,11 @@ $lr-min-width: calc(
 .view-homepage {
   > div:first-child {
     height: 0;
+  }
+
+  button {
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 

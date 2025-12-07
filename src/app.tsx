@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 
-import DefaultHomepage from "./pages/homepage";
+import DefaultHomepage from "./pages/view/defaultHomepage";
 import "./css/index";
 import { DefaultAlluvialLoader } from "./pages/widget/AlluvialContent/defaultContent";
 

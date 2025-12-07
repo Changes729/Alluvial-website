@@ -1,11 +1,11 @@
 import React, { Component, useEffect, useState } from "react";
 
 import style from "./homepage.module.scss";
-import { DivPic } from "./widget/DivPic";
+import { DivPic } from "../widget/DivPic";
 import {
   loadContent,
   MilkdownContent,
-} from "./widget/AlluvialContent/content-loader";
+} from "../widget/AlluvialContent/content-loader";
 
 export interface HomepageTemplate {
   View: React.FC<MilkdownContent>;
