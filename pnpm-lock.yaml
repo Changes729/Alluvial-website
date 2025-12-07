@@ -115,6 +115,9 @@ importers:
       react-burger-menu:
         specifier: ^2.9.2
         version: 2.9.2(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react-complex-tree:
+        specifier: ^2.6.1
+        version: 2.6.1(react@19.2.1)
       react-dom:
         specifier: ^19.2.1
         version: 19.2.1(react@19.2.1)
@@ -2626,6 +2629,11 @@ packages:
     peerDependencies:
       react: '>=0.14.0 <17.0.0'
       react-dom: '>=0.14.0 <17.0.0'
+
+  react-complex-tree@2.6.1:
+    resolution: {integrity: sha512-RZubW4lh086/R38bbNKpkRpLWG+PdEMBIvYvSUelYNJfv/xaAboRKguWN8hfBvoV9O4NSi6jcMv/AcCm2PbJRg==}
+    peerDependencies:
+      react: '>=16.0.0'
 
   react-dom@19.2.1:
     resolution: {integrity: sha512-ibrK8llX2a4eOskq1mXKu/TGZj9qzomO+sNfO98M6d9zIPOEhlBkMkBUBLd1vgS0gQsLDBzA+8jJBVXDnfHmJg==}
@@ -6579,6 +6587,10 @@ snapshots:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
       snapsvg-cjs: 0.0.6(eve@0.5.4)
+
+  react-complex-tree@2.6.1(react@19.2.1):
+    dependencies:
+      react: 19.2.1
 
   react-dom@19.2.1(react@19.2.1):
     dependencies:

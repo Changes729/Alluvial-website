@@ -2,9 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 
-import DefaultHomepage from "./pages/view/defaultHomepage";
 import "./css/index";
-import { DefaultAlluvialLoader } from "./pages/widget/AlluvialContent/defaultContent";
+import AlluvialHomepage from "./pages/view/alluvialHomePage";
 
 function App() {
   onload = () => {
@@ -14,10 +13,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/*"
-          element={<DefaultHomepage View={DefaultAlluvialLoader} />}
-        />
+        <Route path="/*" element={<AlluvialHomepage />} />
       </Routes>
     </BrowserRouter>
   );
