@@ -23,6 +23,7 @@ export const DefaultAlluvialLoader: React.FC<MilkdownContent> = ({
     } else if (contentType?.includes("text/html")) {
       setPageContent(content as string);
     } else {
+      setPageContent(content as string);
     }
   }, [contentType, content]);
 
