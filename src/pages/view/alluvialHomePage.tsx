@@ -14,7 +14,7 @@ import {
   TreeItemIndex,
   TreeItem,
 } from "react-complex-tree";
-import { Router, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { Menu } from "../widget/AlluvialContent/menu";
 
 interface AlluvialContent extends MilkdownContent {
@@ -23,6 +23,7 @@ interface AlluvialContent extends MilkdownContent {
 
 export const AlluvialHomepage: React.FC<{}> = ({}) => {
   const location = useLocation();
+  const params = useParams();
   const navigate = useNavigate();
   const [state, setState] = useState<MilkdownContent>({
     contentType: null,
@@ -46,6 +47,10 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
     return location.pathname + tag;
   }
 
+  function _location(): string {
+    return "/" + params["*"];
+  }
+
   function hash(str: string) {
     let hash = 2166136261; // FNV-1a 算法的初始值
     for (let i = 0; i < str.length; i++) {
@@ -60,12 +65,12 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
 
   /** componentDidMount */
   useEffect(() => {
-    if (!location.pathname.endsWith("/") || location.pathname.length == 0) {
-      const indexOfSlash = location.pathname.indexOf("/");
+    if (!_location().endsWith("/") && _location().length != 0) {
+      const indexOfSlash = _location().indexOf("/");
       if (indexOfSlash == -1) {
-        console.log("error redirect path: ", location.pathname);
+        console.log("error redirect path: ", _location());
       }
-      const newUrl = location.pathname.substring(0, indexOfSlash + 1);
+      const newUrl = _location().substring(0, indexOfSlash + 1);
       console.log("navigate to ", newUrl);
       navigate(newUrl);
       return;
@@ -85,7 +90,7 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
     });
     setSelectedItems([]);
 
-    loadContent(location.pathname)
+    loadContent(_location())
       .then(({ contentType, content }) => {
         if (!contentType || !contentType.includes("text/directory")) {
           console.log("error");
@@ -115,7 +120,7 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
 
           if (firstFile !== null) {
             setSelectedItems([hash(firstFile)]);
-            loadContent(location.pathname + firstFile).then(
+            loadContent(_location() + firstFile).then(
               ({ contentType, content }) => {
                 setState({ contentType, content });
               }
@@ -126,7 +131,7 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
       .finally(() => {
         setTreeItems(tagList.current);
       });
-  }, [location]);
+  }, [params]);
 
   function onSelectItems(items: TreeItemIndex[], treeID: string) {
     setSelectedItems(items);

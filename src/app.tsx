@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 
 import "./css/index";
 import AlluvialHomepage from "./pages/view/alluvialHomePage";
+
+const IndexPage: React.FC = ({}) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/TidalTree/");
+  }, []);
+
+  return <></>;
+};
 
 function App() {
   onload = () => {
@@ -13,7 +23,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/*" element={<AlluvialHomepage />} />
+        <Route index path="/" element={<IndexPage />} />
+        <Route path="/TidalTree/*" element={<AlluvialHomepage />} />
       </Routes>
     </BrowserRouter>
   );
