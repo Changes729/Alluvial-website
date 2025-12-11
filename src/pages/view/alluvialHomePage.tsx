@@ -141,9 +141,11 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
     if (isFolder) {
       navigate(path);
     } else {
-      loadContent(path).then(({ contentType, content }) => {
-        setState({ contentType, content });
-      });
+      loadContent(_location() + tagList.current[items[0]].data).then(
+        ({ contentType, content }) => {
+          setState({ contentType, content });
+        }
+      );
     }
   }
   return (
