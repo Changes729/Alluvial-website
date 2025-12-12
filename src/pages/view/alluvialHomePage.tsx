@@ -148,6 +148,7 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
       );
     }
   }
+
   return (
     <div className={style["view-homepage"]}>
       <Menu>

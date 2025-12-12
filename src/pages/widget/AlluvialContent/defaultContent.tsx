@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import MilkDownEditor from "alluvial-editor";
+import { BasicEditorView, TyporaEditor } from "alluvial-editor";
 import style from "./content.module.scss";
 import { MilkdownContent } from "./content-loader";
 
@@ -9,7 +9,7 @@ export const DefaultAlluvialLoader: React.FC<MilkdownContent> = ({
 }) => {
   const [pageContent, setPageContent] = useState<string>("");
   const [styleClass, setStyleClass] = useState<string>("");
-  const editor = useRef<MilkDownEditor>(null);
+  const editor = useRef<TyporaEditor>(TyporaEditor.make());
 
   useMemo(() => {
     if (contentType?.includes("text/markdown")) {
@@ -28,12 +28,19 @@ export const DefaultAlluvialLoader: React.FC<MilkdownContent> = ({
   }, [contentType, content]);
 
   useEffect(() => {
-    editor.current?.UpdateEditorContent(pageContent);
+    editor.current.UpdateEditorContent(pageContent);
   }, [pageContent]);
+
+  useEffect(() => {
+    editor.current.create();
+  }, []);
 
   return contentType?.includes("text/html") ? (
     <div dangerouslySetInnerHTML={{ __html: pageContent }} />
   ) : (
-    <MilkDownEditor className={styleClass} ref={editor} editable={false} />
+    <BasicEditorView
+      editor={editor.current}
+      classStyle={styleClass}
+    ></BasicEditorView>
   );
 };

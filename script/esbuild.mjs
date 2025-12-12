@@ -53,6 +53,9 @@ let ctx = await esbuild.context({
     }),
   ],
   conditions: ["production"],
+  alias: {
+    'react': 'react',
+  },
 });
 
 let { host, port } = await ctx.serve({

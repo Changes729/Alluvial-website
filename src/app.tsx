@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 
 import "./css/index";
 import AlluvialHomepage from "./pages/view/alluvialHomePage";
+import AlluvialTidal from "./pages/view/AlluvialTidal";
 
 const IndexPage: React.FC = ({}) => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route index path="/" element={<IndexPage />} />
+        <Route path="/Tidal" element={<AlluvialTidal />} />
         <Route path="/TidalTree/*" element={<AlluvialHomepage />} />
       </Routes>
     </BrowserRouter>
