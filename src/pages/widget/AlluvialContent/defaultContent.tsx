@@ -33,6 +33,7 @@ export const DefaultAlluvialLoader: React.FC<MilkdownContent> = ({
 
   useEffect(() => {
     editor.current.create();
+    editor.current.editable = () => false;
   }, []);
 
   return contentType?.includes("text/html") ? (
