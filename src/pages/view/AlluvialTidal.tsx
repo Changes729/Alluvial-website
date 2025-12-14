@@ -79,7 +79,10 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
                 index: hash(tagName),
                 isFolder: false,
               };
-              tagList.current["root"].children?.push(hash(tagName));
+              tagList.current["root"].children = [
+                hash(tagName),
+                ...tagList.current["root"].children!,
+              ];
 
               const editor = TidalEditor.make();
               setEditorState((state) => [editor, ...state]);
@@ -110,7 +113,10 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
             index: hash(today),
             isFolder: false,
           };
-          tagList.current["root"].children?.push(hash(today));
+          tagList.current["root"].children = [
+            hash(today),
+            ...tagList.current["root"].children!,
+          ];
 
           const editor = TidalEditor.make();
           setEditorState((state) => [editor, ...state]);
