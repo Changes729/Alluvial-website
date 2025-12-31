@@ -49,7 +49,7 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
   }
 
   function _location(): string {
-    return "/" + params["*"];
+    return "/markdowns/" + params["*"];
   }
 
   /** componentDidMount */
@@ -85,27 +85,28 @@ export const AlluvialHomepage: React.FC<{}> = ({}) => {
           console.log("error");
         } else {
           let firstFile: string | null = null;
+          for (const item of content) {
+            for (const [key, value] of Object.entries(item)) {
+              const isFolder = key.endsWith("/");
 
-          (content as string[]).forEach((tagName) => {
-            const isFolder = tagName.endsWith("/");
+              tagList.current[hash(key)] = {
+                data: decodeURI(key),
+                index: hash(key),
+                isFolder: isFolder,
+              };
+              tagList.current["root"].children?.push(hash(key));
 
-            tagList.current[hash(tagName)] = {
-              data: decodeURI(tagName),
-              index: hash(tagName),
-              isFolder: isFolder,
-            };
-            tagList.current["root"].children?.push(hash(tagName));
+              contentList.current[hash(key)] = {
+                contentType: null,
+                content: "",
+                url: _index(key),
+              };
 
-            contentList.current[hash(tagName)] = {
-              contentType: null,
-              content: "",
-              url: _index(tagName),
-            };
-
-            if (!isFolder && (tagName == "README.md" || firstFile == null)) {
-              firstFile = tagName;
+              if (!isFolder && (key == "README.md" || firstFile == null)) {
+                firstFile = key;
+              }
             }
-          });
+          }
 
           if (firstFile !== null) {
             setSelectedItems([hash(firstFile)]);

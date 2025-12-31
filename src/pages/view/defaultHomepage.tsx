@@ -20,7 +20,7 @@ export const DefaultHomepage: React.FC<HomepageTemplate> = ({ View }) => {
 
   /** componentDidMount */
   useEffect(() => {
-    loadContent(url_path).then(({ contentType, content }) => {
+    loadContent("/markdowns/").then(({ contentType, content }) => {
       setState({ contentType, content });
     });
   }, []);

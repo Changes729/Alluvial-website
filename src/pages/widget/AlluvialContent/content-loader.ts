@@ -4,7 +4,7 @@ export type MilkdownContent = {
 };
 
 export async function loadContent(arg: string): Promise<MilkdownContent> {
-  const fetch_path = "/markdowns" + arg;
+  const fetch_path = arg;
   var contentType: string | null = null;
   var content = "";
 
@@ -39,16 +39,12 @@ export function toFile(fileName: string, data: any, mimeType: string) {
 }
 
 export async function saveContent(path: string, file: File) {
-  const upload_path = "/markdowns" + path;
-  const credentials = `test:secret`;
   const formData = new FormData();
   formData.append("file", file);
 
-  fetch(upload_path, {
+  fetch(path, {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${btoa(credentials)}`,
-    },
+    headers: {},
     body: formData,
   }).then((response) => {
     if (response.status === 401) {

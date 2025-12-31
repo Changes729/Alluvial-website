@@ -1,9 +1,17 @@
-import React, { Component, useEffect, useState, useRef, useMemo } from "react";
+import React, {
+  Component,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useTransition,
+} from "react";
 
 import style from "./homepage.module.scss";
 import { DivPic } from "../widget/DivPic";
 import { Menu } from "../widget/AlluvialContent/menu";
 import { BasicEditorView, getMarkdown, TidalEditor } from "alluvial-editor";
+import type { TidalData } from "alluvial-editor";
 import {
   loadContent,
   saveContent,
@@ -16,6 +24,7 @@ import {
   TreeItem,
 } from "react-complex-tree";
 import { hash } from "../../utils/hash";
+import { waitUntil } from "alluvial-editor/web/utils/utils";
 
 function fileName(base64file: string) {
   const file = decodeURI(base64file);
@@ -23,16 +32,16 @@ function fileName(base64file: string) {
   return indexOfSlash ? file.substring(0, indexOfSlash) : file;
 }
 
-const daysInChinese = ["日", "一", "二", "三", "四", "五", "六"];
-
 export const AlluvialTidal: React.FC<{}> = ({}) => {
   var contentList = useRef<string[]>([]);
-  const [editorState, setEditorState] = useState<TidalEditor[]>([]);
+  const [dataRecord, setDataRecord] = useState<Record<string, string>>({});
+  const editor = useRef<TidalEditor>(TidalEditor.make());
   const [treeItems, setTreeItems] = useState<Record<TreeItemIndex, TreeItem>>(
     {}
   );
   const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
-  const url = useRef<string>(`/日志/${new Date().getFullYear()}/`);
+  const [isPending, startTransition] = useTransition();
+  const url = useRef<string>(`/tidal/`);
 
   let tagList = useRef<Record<TreeItemIndex, TreeItem>>({
     root: {
@@ -44,20 +53,56 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
   });
 
   function saveFile() {
-    contentList.current.forEach((f, i) => {
+    const data = editor.current.tidalData();
+    data.forEach((v) => {
+      var named = "vision";
+      if (Object.hasOwn(v, "date")) {
+        const formatter = new Intl.DateTimeFormat("en-CA", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+
+        named = formatter.format(v.date);
+      }
+
       saveContent(
-        url.current + f + "/",
-        toFile(
-          "README.md",
-          editorState[i].action(getMarkdown()),
-          "text/markdown"
-        )
+        "/tidal/" + named,
+        toFile("README.md", v.str, "text/markdown")
       );
     });
   }
 
+  function newDate(dateStr: string) {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day, 12);
+  }
+
   useEffect(() => {
-    setEditorState([]);
+    if (!isPending) {
+      let val: TidalData[] = [];
+      contentList.current.forEach((value) => {
+        if (dataRecord[value] != undefined)
+          val.push(
+            value == "vision"
+              ? { str: dataRecord[value] }
+              : { date: newDate(value), str: dataRecord[value] }
+          );
+      });
+
+      if (val.length) editor.current.initTidal(val);
+    }
+  }, [isPending]);
+
+  useEffect(() => {
+    if (!isPending) {
+      startTransition(async () => {
+        await waitUntil(() => editor.current.CouldUpdate());
+      });
+    }
+  }, [dataRecord]);
+
+  useEffect(() => {
     tagList.current = {
       root: {
         index: "root",
@@ -67,38 +112,37 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
       },
     };
 
-    loadContent(url.current)
+    loadContent("/tidal/")
       .then(({ contentType, content }) => {
         if (!contentType || !contentType.includes("text/directory")) {
           console.log("error");
         } else {
-          (content as string[]).forEach((tagName) => {
-            if (tagName.endsWith("/")) {
-              tagList.current[hash(tagName)] = {
-                data: fileName(tagName),
-                index: hash(tagName),
+          for (const item of content) {
+            for (const [key, value] of Object.entries(item)) {
+              tagList.current[hash(key)] = {
+                data: key,
+                index: hash(key),
                 isFolder: false,
               };
               tagList.current["root"].children = [
-                hash(tagName),
+                hash(key),
                 ...tagList.current["root"].children!,
               ];
 
-              const editor = TidalEditor.make();
-              setEditorState((state) => [editor, ...state]);
-              contentList.current = [fileName(tagName), ...contentList.current];
+              contentList.current = [key, ...contentList.current];
 
-              loadContent(url.current + tagName + "README.md").then(
-                ({ contentType, content }) => {
-                  if (!contentType || !contentType.includes("text/markdown")) {
-                    console.log("error");
-                  } else {
-                    editor.UpdateEditorContent(content as string);
-                  }
+              loadContent("/tidal/" + key).then(({ contentType, content }) => {
+                if (!contentType || !contentType.includes("text/markdown")) {
+                  console.log("error:", contentType, content);
+                } else {
+                  setDataRecord((prev) => ({
+                    ...prev,
+                    [key]: content as string,
+                  }));
                 }
-              );
+              });
             }
-          });
+          }
         }
       })
       .finally(() => {
@@ -107,7 +151,6 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
           date.getMonth() + 1
         }-${date.getDate()}`;
         if (!contentList.current.includes(today)) {
-          console.log("add new");
           tagList.current[hash(today)] = {
             data: today,
             index: hash(today),
@@ -118,9 +161,11 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
             ...tagList.current["root"].children!,
           ];
 
-          const editor = TidalEditor.make();
-          setEditorState((state) => [editor, ...state]);
           contentList.current = [today, ...contentList.current];
+          setDataRecord((prev) => ({
+            ...prev,
+            [today]: "",
+          }));
         }
 
         setTreeItems(tagList.current);
@@ -167,22 +212,7 @@ export const AlluvialTidal: React.FC<{}> = ({}) => {
           <Tree treeId="tree" rootItem="root" treeLabel="Tree Example" />
         </ControlledTreeEnvironment>
       </Menu>
-      <div className={style["abstract-content-part"]}>
-        {editorState.map((editor, i) => (
-          <>
-            <h1 className="milkdown">
-              {contentList.current[i] +
-                `（${
-                  daysInChinese[new Date(contentList.current[i]).getDay()]
-                }）`}
-            </h1>
-            <BasicEditorView
-              editor={editor}
-              classStyle={style["editor-center"]}
-            ></BasicEditorView>
-          </>
-        ))}
-      </div>
+      <BasicEditorView editor={editor.current}></BasicEditorView>
     </div>
   );
 };
