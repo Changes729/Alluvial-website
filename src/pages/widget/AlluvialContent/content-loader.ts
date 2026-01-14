@@ -60,3 +60,24 @@ export async function saveContent(path: string, file: File) {
     return response;
   });
 }
+
+export async function saveContentBlob(path: string, blobValue: Blob) {
+  const formData = new FormData();
+  formData.append("file", await blobValue.text());
+
+  fetch(path, {
+    method: "POST",
+    headers: {
+      ContentType: blobValue.type,
+    },
+    body: formData,
+  }).then((response) => {
+    if (response.status === 401) {
+      throw new Error("认证失败：用户名或密码错误。");
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP 错误: ${response.status}`);
+    }
+    return response;
+  });
+}

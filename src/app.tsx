@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
 import "./css/index";
 import AlluvialHomepage from "./pages/view/alluvialHomePage";
 import AlluvialTidal from "./pages/view/AlluvialTidal";
+import AlluvialApp from "./pages/view/alluvialApp";
 
 const IndexPage: React.FC = ({}) => {
   const navigate = useNavigate();
@@ -34,5 +35,9 @@ function App() {
 
 /** Main Start */
 window.onload = () => {
-  ReactDOM.createRoot(document.body).render(<App />);
+  if (new URL(document.URL).protocol == "app:") {
+    ReactDOM.createRoot(document.body).render(<AlluvialApp />);
+  } else {
+    ReactDOM.createRoot(document.body).render(<App />);
+  }
 };
