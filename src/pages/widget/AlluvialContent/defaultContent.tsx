@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import { BasicEditorView, TyporaEditor } from "alluvial-editor";
+import { BasicEditorView, EmptyLinePrefix, TyporaEditor } from "alluvial-editor";
 import style from "./content.module.scss";
 import { MilkdownContent } from "./content-loader";
 
@@ -28,7 +28,7 @@ export const DefaultAlluvialLoader: React.FC<MilkdownContent> = ({
   }, [contentType, content]);
 
   useEffect(() => {
-    editor.current.UpdateEditorContent(pageContent);
+    editor.current.UpdateEditorContent(EmptyLinePrefix(pageContent));
   }, [pageContent]);
 
   useEffect(() => {
