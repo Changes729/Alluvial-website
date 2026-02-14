@@ -11,7 +11,7 @@ import {
 } from "react-complex-tree";
 import { Menu } from "../widget/AlluvialContent/menu";
 import { hash } from "../../utils/hash";
-import { BasicEditorView, getMarkdown, TyporaEditor } from "alluvial-editor";
+import { BasicEditorView, EmptyLinePrefix, getMarkdown, TyporaEditor } from "alluvial-editor";
 
 interface AlluvialContent extends MilkdownContent {
   url: string;
@@ -113,7 +113,7 @@ export const AlluvialApp: React.FC<{}> = ({}) => {
     } else {
       handler.current = items[0];
       window.fsRead(path).then((content) => {
-        editor.current.UpdateEditorContent(content);
+        editor.current.UpdateEditorContent(EmptyLinePrefix(content));
       });
     }
   }
